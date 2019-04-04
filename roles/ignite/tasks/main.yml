@@ -1,0 +1,69 @@
+---
+# tasks file for ignite
+
+- name: start ignite
+  k8s:
+    definition:
+      kind: Deployment
+      apiVersion: apps/v1
+      metadata:
+        name: '{{ meta.name }}-ignite'
+        namespace: '{{ meta.namespace }}'
+      spec:
+        replicas: "{{size}}"
+        selector:
+          matchLabels:
+            app: ignite
+        template:
+          metadata:
+            labels:
+              app: ignite
+          spec:
+            containers:
+            - name: ignite
+              image: "{{ IGNITE_IMAGE }}"
+              env:
+              - name: OPTION_LIBS
+                value: ignite-kubernetes
+              ports:
+                - containerPort: 11211 # REST port number.
+                  protocol: TCP
+                - containerPort: 47100 # communication SPI port number.
+                  protocol: TCP
+                - containerPort: 47500 # discovery SPI port number.
+                  protocol: TCP
+                - containerPort: 49112 # JMX port number.
+                  protocol: TCP
+                - containerPort: 10800 # SQL port number.
+                  protocol: TCP
+                - containerPort: 10900 # Thin clients port number.
+                  protocol: TCP
+            serviceAccount: ignite-operator
+            serviceAccountName: ignite-operator
+
+- name: start the service
+  k8s:
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        # The name must be equal to TcpDiscoveryKubernetesIpFinder.serviceName
+        name: ignite
+        # The name must be equal to TcpDiscoveryKubernetesIpFinder.namespaceName
+        namespace: cluster-ignite
+      spec:
+        type: LoadBalancer
+        ports:
+          - name: rest
+            port: 8080
+            targetPort: 8080
+          - name: sql
+            port: 10800
+            targetPort: 10800
+          - name: thinclients
+            port: 10900
+            targetPort: 10900
+        selector:
+          # Must be equal to the label set for Ignite pods.
+          app: ignite
+

@@ -1,0 +1,5 @@
+---
+- version: v1alpha1
+  group: ignite.buuhsmead.github.com
+  kind: Ignite
+  role: /opt/ansible/roles/ignite

@@ -1,0 +1,7 @@
+---
+# defaults file for ignite
+size: 2
+
+#IGNITE_IMAGE: apacheignite/ignite:2.7.0
+IGNITE_IMAGE: quay.io/hdaems/ignite-node:latest
+

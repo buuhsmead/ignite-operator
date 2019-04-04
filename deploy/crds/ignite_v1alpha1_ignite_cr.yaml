@@ -1,0 +1,7 @@
+apiVersion: ignite.buuhsmead.github.com/v1alpha1
+kind: Ignite
+metadata:
+  name: example-ignite
+spec:
+  # Add fields here
+  size: 3
